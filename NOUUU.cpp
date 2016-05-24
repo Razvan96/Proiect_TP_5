@@ -11,6 +11,7 @@
 #include<stdlib.h>
 #include "NOUUU.h"
 #include "Resource.h"
+//#include "atlbase.h"
 using namespace::std;
 #define MAX_LOADSTRING 100
 // Global Variables:
@@ -575,7 +576,7 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case IDC_BUTTON1:
 		{
-			OPENFILENAMEW ofn;       // common dialog box structure
+			/*OPENFILENAMEW ofn;       // common dialog box structure
 			char szFile[260];       // buffer for file name
 			HWND hwnd;              // owner window
 			HANDLE hf;              // file handle
@@ -597,19 +598,71 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 			// Display the Open dialog box. 
-
+			*/
+			/*OPENFILENAME ofn;
+			char szFileName[MAX_PATH] = "";
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn); // SEE NOTE BELOW
+			ofn.hwndOwner = hDlg;
+			ofn.lpstrFilter =(LPCWSTR) "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+			ofn.lpstrFile =(LPWSTR) szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+			ofn.lpstrDefExt =(LPCWSTR) "txt";*/
+			OPENFILENAME ofn;
+			TCHAR szFile[MAX_PATH];
+			char fisintrare[MAX_PATH];
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.lpstrFile = szFile;
+			ofn.lpstrFile[0] = '\0';
+			ofn.hwndOwner = hDlg;
+			ofn.nMaxFile = sizeof(szFile);
+			ofn.lpstrFilter = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0");//TEXT("All files(*.*)\0*.*\0");
+			ofn.nFilterIndex = 1;
+			ofn.lpstrInitialDir = NULL;
+			ofn.lpstrFileTitle = NULL;
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 			LPCTSTR WindowCaption = L"Ai ales fisierul cu numele...";
+
+			/*convertesc niste comenzi pentru listbox la compresie
+			char*  stheParameterFileName = argv[1];
+			TCHAR szName [512];
+			_tcscpy(szName, A2T(stheParameterFileName));
+			*/
+			
+			//int index;
+			//index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+
 			if (GetOpenFileName(&ofn) == TRUE)
 			{
-				MessageBox(NULL, (LPCWSTR)szFile, WindowCaption, MB_ICONINFORMATION);
+				
+				//index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)"Acesta este ...");
+				//MessageBox(NULL, (LPCWSTR)szFile, WindowCaption, MB_ICONINFORMATION);
+				//strcpy(fisintrare, szFile);
+				wcstombs(fisintrare, szFile, wcslen(szFile) + 1);
+
+				char com1[500], com2[500]; TCHAR COM1[MAX_PATH], COM2[MAX_PATH];
+				//strcpy(com1, "S-a ales fisierul pentru intrare ..."); _tcscpy(COM1, A2T(com1));
+				strcpy(com2, "Acesta este "); strcat(com2, fisintrare); strcat(com2, " ...");
+				HWND hwndList = GetDlgItem(hDlg, IDC_LIST1);
+				//int pos = (int)SendMessage(hwndList, LB_ADDSTRING, 0,(LPARAM)COM1);
+				
+				SetDlgItemText(hDlg, IDC_EDIT11, szFile);
+				int index;
+				LPCTSTR strMsg = L"A fost ales fisierul pentru intrare ...";
+				LPCTSTR strMsg1 = L"Acesta este ...";
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0,(LPARAM)(LPCTSTR)strMsg);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
 			}
 
-			char filename_in[40];
-			char filename_encode[60];
-			char filename_decode[60];
+			char filename_in[1000];
+			char filename_encode[1000];
+			char filename_decode[1000];
 			int filename_len = -1;
 			//scanf("%s", filename_in);
-			strcpy(filename_in, "in.txt");
+			strcpy(filename_in, fisintrare);
 			filename_len = check_filename(filename_in);
 			while (filename_len < 0 || (fp_in = fopen(filename_in, "r")) == NULL) {
 				printf("open failed, try again!\n");
@@ -669,17 +722,50 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			*/
 		}break;
+
+		case IDC_BUTTON12:
+		{
+			OPENFILENAME ofn;
+			TCHAR szFile[MAX_PATH];
+			char fisintrare[MAX_PATH];
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.lpstrFile = szFile;
+			ofn.lpstrFile[0] = '\0';
+			ofn.hwndOwner = hDlg;
+			ofn.nMaxFile = sizeof(szFile);
+			ofn.lpstrFilter = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0");//TEXT("All files(*.*)\0*.*\0");
+			ofn.nFilterIndex = 1;
+			ofn.lpstrInitialDir = NULL;
+			ofn.lpstrFileTitle = NULL;
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+			if (GetOpenFileName(&ofn) == TRUE)
+			{
+				SetDlgItemText(hDlg, IDC_EDIT12, szFile);
+				int index;
+				LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
+				LPCTSTR strMsg1 = L"Acesta este ...";
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+			}
+		}break;
 		//Aici trebuie pus codul pentru compresie
 		case IDOK1:
 		{
-			LPCTSTR WindowCaption = L"Compress...";
-			MessageBox(NULL, L"Sa inceapa compresia!", WindowCaption, MB_ICONINFORMATION);
+			int index;
+			LPCTSTR strMsg = L"Sa inceapa compresia !";
+			LPCTSTR strMsg1 = L"Compresia s-a finalizat !";
+			index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+			index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+			/*LPCTSTR WindowCaption = L"Compress...";
+			MessageBox(NULL, L"Sa inceapa compresia!", WindowCaption, MB_ICONINFORMATION);*/
 			
-			LPCTSTR WindowCaption1 = L"Final...";
-			MessageBox(NULL, L"Compresia s-a finalizat !", WindowCaption1, MB_ICONINFORMATION);
+			/*LPCTSTR WindowCaption1 = L"Final...";
+			MessageBox(NULL, L"Compresia s-a finalizat !", WindowCaption1, MB_ICONINFORMATION);*/
 
-			LPCTSTR WindowCaption2 = L"Important !!!";
-			MessageBox(NULL, L"Compresia s-a realizat in fisierul text < in_encode.txt > !", WindowCaption2, MB_ICONINFORMATION);
+			/*LPCTSTR WindowCaption2 = L"Important !!!";
+			MessageBox(NULL, L"Compresia s-a realizat in fisierul text < in_encode.txt > !", WindowCaption2, MB_ICONINFORMATION);*/
 		}break;
 		}
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -730,7 +816,7 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			case IDC_BUTTON2:
 			{
-				OPENFILENAMEW ofn;       // common dialog box structure
+				/*OPENFILENAMEW ofn;       // common dialog box structure
 				char szFile[260];       // buffer for file name
 				HWND hwnd;              // owner window
 				HANDLE hf;              // file handle
@@ -749,27 +835,63 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				ofn.lpstrFileTitle = NULL;
 				ofn.nMaxFileTitle = 0;
 				ofn.lpstrInitialDir = NULL;
-				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;*/
 
 				// Display the Open dialog box. 
-
+				/*OPENFILENAME ofn;
+				char szFileName[MAX_PATH] = "";
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn); // SEE NOTE BELOW
+				ofn.hwndOwner = hDlg;
+				ofn.lpstrFilter = (LPCWSTR)"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+				ofn.lpstrFile =(LPWSTR) szFileName;
+				ofn.nMaxFile = MAX_PATH;
+				ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+				ofn.lpstrDefExt = (LPCWSTR)"txt";*/
+				OPENFILENAME ofn;
+				TCHAR szFile[MAX_PATH];
+				char fisintrare[MAX_PATH];
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn);
+				ofn.lpstrFile = szFile;
+				ofn.lpstrFile[0] = '\0';
+				ofn.hwndOwner = hDlg;
+				ofn.nMaxFile = sizeof(szFile);
+				ofn.lpstrFilter = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0");//TEXT("All files(*.*)\0*.*\0");
+				ofn.nFilterIndex = 1;
+				ofn.lpstrInitialDir = NULL;
+				ofn.lpstrFileTitle = NULL;
+				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 				LPCTSTR WindowCaption = L"Ai ales fisierul cu numele...";
+				LPCTSTR WindowCaption1 = L"Am trecut de mesaj...";
 				if (GetOpenFileName(&ofn) == TRUE)
 				{
-					MessageBox(NULL, (LPCWSTR)szFile, WindowCaption, MB_ICONINFORMATION);
+					//MessageBox(NULL, (LPCWSTR)szFile, WindowCaption, MB_ICONINFORMATION);
+					wcstombs(fisintrare, szFile, wcslen(szFile) + 1);
+					//SetDlgItemText(hDlg, IDC_EDIT1, szFile);
+					//MessageBox(NULL, (LPCWSTR)szFile, WindowCaption1, MB_ICONINFORMATION);
+					//int index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+
+					SetDlgItemText(hDlg, IDC_EDIT1, szFile);
+					int index;
+					LPCTSTR strMsg = L"A fost ales fisierul pentru intrare ...";
+					LPCTSTR strMsg1 = L"Acesta este ...";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
 				}
-				char filename_in[40];
-				char filename_encode[60];
-				char filename_decode[60];
+				char filename_in[1000];
+				char filename_encode[1000];
+				char filename_decode[1000];
 				int filename_len = -1;
 				//scanf("%s", filename_encode);
-				strcpy(filename_encode, "in_encode.txt");
+				strcpy(filename_encode, fisintrare);
 				filename_len = check_filename2(filename_encode);
 				filename_encode[filename_len] = '\0';
 				filename_decode[0] = '\0';
 				strcat(filename_decode, filename_encode);
 				strcat(filename_decode, "_decode.txt");
-				strcpy(filename_encode, "in_encode.txt");
+				strcpy(filename_encode, fisintrare);
 				while (filename_len < 0 || (fp_encode = fopen(filename_encode, "r")) == NULL) {
 					printf("open failed, try again!\n");
 					scanf("%s", filename_encode);
@@ -783,17 +905,50 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				fclose(fp_decode);
 				fclose(fp_encode);
 			}break;
+
+			case IDC_BUTTON22:
+			{
+				OPENFILENAME ofn;
+				TCHAR szFile[MAX_PATH];
+				char fisintrare[MAX_PATH];
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn);
+				ofn.lpstrFile = szFile;
+				ofn.lpstrFile[0] = '\0';
+				ofn.hwndOwner = hDlg;
+				ofn.nMaxFile = sizeof(szFile);
+				ofn.lpstrFilter = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0");//TEXT("All files(*.*)\0*.*\0");
+				ofn.nFilterIndex = 1;
+				ofn.lpstrInitialDir = NULL;
+				ofn.lpstrFileTitle = NULL;
+				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+				if (GetOpenFileName(&ofn) == TRUE)
+				{
+					SetDlgItemText(hDlg, IDC_EDIT2, szFile);
+					int index;
+					LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
+					LPCTSTR strMsg1 = L"Acesta este ...";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+				}
+			}break;
 			//Aici trebuie pus codul pentru decompresie
 			case IDOK2:
 			{
-				LPCTSTR WindowCaption = L"Decompress...";
-				MessageBox(NULL, L"Sa inceapa decompresia!", WindowCaption, MB_ICONINFORMATION);
+				int index;
+				LPCTSTR strMsg = L"Sa inceapa decompresia !";
+				LPCTSTR strMsg1 = L"Decompresia s-a finalizat !";
+				index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+				index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+				/*LPCTSTR WindowCaption = L"Decompress...";
+				MessageBox(NULL, L"Sa inceapa decompresia!", WindowCaption, MB_ICONINFORMATION);*/
 
-				LPCTSTR WindowCaption1 = L"Final...";
-				MessageBox(NULL, L"Decompresia s-a finalizat !", WindowCaption1, MB_ICONINFORMATION);
+				/*LPCTSTR WindowCaption1 = L"Final...";
+				MessageBox(NULL, L"Decompresia s-a finalizat !", WindowCaption1, MB_ICONINFORMATION);*/
 
-				LPCTSTR WindowCaption2 = L"Important !!!";
-				MessageBox(NULL, L"Decompresia s-a realizat in fisierul text < in_decode.txt > !", WindowCaption2, MB_ICONINFORMATION);
+				/*LPCTSTR WindowCaption2 = L"Important !!!";
+				MessageBox(NULL, L"Decompresia s-a realizat in fisierul text < in_decode.txt > !", WindowCaption2, MB_ICONINFORMATION);*/
 			}break;
 		}
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
