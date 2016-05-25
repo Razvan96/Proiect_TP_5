@@ -9,6 +9,8 @@
 #include<string.h>
 #include<cstdio>
 #include<stdlib.h>
+#include<wchar.h>
+#include<time.h>
 #include "NOUUU.h"
 #include "Resource.h"
 //#include "atlbase.h"
@@ -565,8 +567,11 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
 	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
+	case WM_INITDIALOG: {
+		HWND h = GetDlgItem(hDlg, IDC_LIST1);
+		if (h == NULL) MessageBox(hDlg, L"EERR", L"DD", NULL);
+		SendMessage(h, LB_SETHORIZONTALEXTENT, 500, NULL);
+		return (INT_PTR)TRUE; }
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);
@@ -726,16 +731,45 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			ofn.lpstrInitialDir = NULL;
 			ofn.lpstrFileTitle = NULL;
 			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-			if (GetOpenFileName(&ofn) == TRUE)
+			if (GetSaveFileName(&ofn) == TRUE)
 			{
 				wcstombs(fisiesire, szFile, wcslen(szFile) + 1);
-				SetDlgItemText(hDlg, IDC_EDIT12, szFile);
+				strcat(fisiesire, "_encode.txt");
+				//MultiByteToWideChar
+				
+				/*
+				LPCTSTR strMs1 = L"Bla bla bla ...";
+				TCHAR fullPath[MAX_PATH + 11]; // 11 = length of "\MyApp.exe" + nul in characters
+				_sntprintf_s(fullPath, MAX_PATH + 11, _T("%s\\MyApp.exe"), strMs1);*/
+
+				LPCTSTR strMs1 = L"Bla bla bla ...";
+				TCHAR fullPath[MAX_PATH + 11]; // 11 = length of "\MyApp.exe" + nul in characters
+				_sntprintf_s(fullPath, MAX_PATH + 11, _T("%s_encode.txt"), szFile);
+
+				TCHAR fullPath1[MAX_PATH + 11];
+				_sntprintf_s(fullPath1, MAX_PATH + 11, _T("%s.txt"), szFile);
+				
+				SetDlgItemText(hDlg, IDC_EDIT12, fullPath1);
+
 				int index;
 				LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
 				LPCTSTR strMsg1 = L"Acesta este ...";
 				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
 				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
-				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)fullPath1);
+				//SetDlgItemText(hDlg, IDC_EDIT12, fullPath1);
+				
+				//Sleep(5000);
+				LPCTSTR strMs2 = L"Fisierul dumneavoastra a fost redenumit pentru a fi gasit si observat mai usor ...";
+				LPCTSTR strMsg3 = L"Noul sau nume este ...";
+
+				LPCTSTR strMsg4 = L"Modificarea s-a efectuat si in campul edit pentru fisierul de iesire de mai sus ...";
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMs2);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg3);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)fullPath);
+
+				SetDlgItemText(hDlg, IDC_EDIT12, fullPath);
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg4);
 			}
 			char filename_in[1000];
 			char filename_encode[1000];
@@ -752,7 +786,7 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			filename_in[filename_len] = '\0';
 			filename_encode[0] = '\0';
 			strcat(filename_encode, fisiesire);
-			strcat(filename_encode, "_encode.txt");
+			//strcat(filename_encode, "_encode.txt");
 			if (NULL == (fp_encode = fopen(filename_encode, "w"))) {
 				printf("create failed!\n");
 				exit(-1);
@@ -817,8 +851,12 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_INITDIALOG:
+	{
+		HWND h = GetDlgItem(hDlg, IDC_LIST2);
+		if (h == NULL) MessageBox(hDlg, L"EERR", L"DD", NULL);
+		SendMessage(h, LB_SETHORIZONTALEXTENT, 500, NULL);
 		return (INT_PTR)TRUE;
-
+	}
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);
@@ -890,6 +928,7 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+
 				}
 				/*char filename_in[1000];
 				char filename_encode[1000];
@@ -933,16 +972,47 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				ofn.lpstrInitialDir = NULL;
 				ofn.lpstrFileTitle = NULL;
 				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-				if (GetOpenFileName(&ofn) == TRUE)
+				if (GetSaveFileName(&ofn) == TRUE)
 				{
 					wcstombs(fisiesire, szFile, wcslen(szFile) + 1);
-					SetDlgItemText(hDlg, IDC_EDIT2, szFile);
+					strcat(fisiesire, "_decode.txt");
+					/*SetDlgItemText(hDlg, IDC_EDIT2, szFile);
 					int index;
 					LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
 					LPCTSTR strMsg1 = L"Acesta este ...";
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
-					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)szFile);*/
+
+					//
+					TCHAR fullPath[MAX_PATH + 11]; // 11 = length of "\MyApp.exe" + nul in characters
+					_sntprintf_s(fullPath, MAX_PATH + 11, _T("%s_decode.txt"), szFile);
+
+					TCHAR fullPath1[MAX_PATH + 11];
+					_sntprintf_s(fullPath1, MAX_PATH + 11, _T("%s.txt"), szFile);
+
+					SetDlgItemText(hDlg, IDC_EDIT2, fullPath1);
+
+					int index;
+					LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
+					LPCTSTR strMsg1 = L"Acesta este ...";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)fullPath1);
+					//SetDlgItemText(hDlg, IDC_EDIT12, fullPath1);
+
+					//Sleep(5000);
+					LPCTSTR strMs2 = L"Fisierul dumneavoastra a fost redenumit pentru a fi gasit si observat mai usor ...";
+					LPCTSTR strMsg3 = L"Noul sau nume este ...";
+
+					LPCTSTR strMsg4 = L"Modificarea s-a efectuat si in campul edit pentru fisierul de iesire de mai sus ...";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMs2);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg3);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)fullPath);
+
+					SetDlgItemText(hDlg, IDC_EDIT2, fullPath);
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg4);
+
 				}
 				char filename_in[1000];
 				char filename_encode[1000];
@@ -953,7 +1023,7 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				filename_encode[filename_len] = '\0';
 				filename_decode[0] = '\0';
 				strcat(filename_decode, fisiesire);
-				strcat(filename_decode, "_decode.txt");
+				//strcat(filename_decode, "_decode.txt");
 				strcpy(filename_encode, fisintrare);
 				while (filename_len < 0 || (fp_encode = fopen(filename_encode, "r")) == NULL) {
 					printf("open failed, try again!\n");
