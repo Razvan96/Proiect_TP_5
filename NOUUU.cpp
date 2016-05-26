@@ -23,6 +23,8 @@ char fisiesire1[MAX_PATH];
 char fisiesire2[MAX_PATH];
 int len;
 int len1;
+int len2;
+int len3;
 
 #define Code_value_bits 16              /* Number of bits in a code value   */
 typedef long code_value;                /* Type of an arithmetic code value */
@@ -1049,6 +1051,20 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 					//int index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, /*(LPARAM)"Hi there!"*/(LPARAM)szFile);
 
 					SetDlgItemText(hDlg, IDC_EDIT1, szFile);
+
+					len2 = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT1));
+					if (len2 > 0)
+					{
+						int i;
+						char* buf;
+						TCHAR asa[MAX_PATH];
+						buf = (char*)GlobalAlloc(GPTR, len2 + 1);
+						GetDlgItemText(hDlg, IDC_EDIT1, asa, len2 + 1);
+						//... do stuff with text ...
+						GlobalFree((HANDLE)buf);
+					}
+
+
 					int index;
 					LPCTSTR strMsg = L"A fost ales fisierul pentru intrare ...";
 					LPCTSTR strMsg1 = L"Acesta este ...";
@@ -1103,7 +1119,9 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				if (GetSaveFileName(&ofn) == TRUE)
 				{
 					wcstombs(fisiesire, szFile, wcslen(szFile) + 1);
+					wcstombs(fisiesire2, szFile, wcslen(szFile) + 1);
 					strcat(fisiesire, "_decode.txt");
+					strcat(fisiesire2, "_decode.txt");
 					/*SetDlgItemText(hDlg, IDC_EDIT2, szFile);
 					int index;
 					LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
@@ -1121,6 +1139,19 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 					_sntprintf_s(fullPath1, MAX_PATH + 11, _T("%s.txt"), szFile);
 
 					SetDlgItemText(hDlg, IDC_EDIT2, fullPath1);
+
+					len3 = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT2));
+					if (len3 > 0)
+					{
+						int i;
+						char* buf;
+						TCHAR asa[MAX_PATH];
+						buf = (char*)GlobalAlloc(GPTR, len3 + 1);
+						GetDlgItemText(hDlg, IDC_EDIT11, asa, len3 + 1);
+						//... do stuff with text ...
+						GlobalFree((HANDLE)buf);
+					}
+
 
 					int index;
 					LPCTSTR strMsg = L"A fost ales fisierul pentru iesire ...";
@@ -1143,7 +1174,7 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg4);
 
 				}
-				char filename_in[1000];
+				/*char filename_in[1000];
 				char filename_encode[1000];
 				char filename_decode[1000];
 				int filename_len = -1;
@@ -1165,12 +1196,63 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				decode();
 				fclose(fp_decode);
-				fclose(fp_encode);
+				fclose(fp_encode);*/
 			}break;
 			//Aici trebuie pus codul pentru decompresie
 			case IDOK2:
 			{
 				int index;
+				if (len2 == 0 && len3 == 0)
+				{
+					LPCTSTR strMsg11 = L"Nu au fost selectate fisierul de intrare si fisierul de iesire !";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg11);
+				}
+				else
+					if (len2 == 0)
+					{
+						LPCTSTR strMsg11 = L"N-a fost selectat fisierul de intrare !";
+						index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg11);
+					}
+					else
+						if (len3 == 0)
+						{
+							LPCTSTR strMsg11 = L"N-a fost selectat fisierul de iesire !";
+							index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg11);
+						}
+						else
+							if (len2 != 0 && len3 != 0)
+							{
+								LPCTSTR strMsg = L"Sa inceapa compresia !";
+								LPCTSTR strMsg1 = L"Compresia s-a finalizat !";
+								index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
+								index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+								char filename_in[1000];
+								char filename_encode[1000];
+								char filename_decode[1000];
+								int filename_len = -1;
+								strcpy(filename_encode, fisintrare);
+								filename_len = check_filename2(filename_encode);
+								filename_encode[filename_len] = '\0';
+								filename_decode[0] = '\0';
+								strcat(filename_decode, fisiesire2);
+								//strcat(filename_decode, "_decode.txt");
+								strcpy(filename_encode, fisintrare);
+								while (filename_len < 0 || (fp_encode = fopen(filename_encode, "r")) == NULL) {
+									printf("open failed, try again!\n");
+									scanf("%s", filename_encode);
+									filename_len = check_filename2(filename_encode);
+								}
+								if (NULL == (fp_decode = fopen(filename_decode, "w"))) {
+									printf("create failed!\n");
+									exit(-1);
+								}
+								decode();
+								fclose(fp_decode);
+								fclose(fp_encode);
+								
+							}
+
+				/*int index;
 				if (ok21 == 0 && ok22 == 0)
 				{
 					LPCTSTR strMsg11 = L"Nu au fost selectate fisierul de intrare si fisierul de iesire !";
@@ -1194,7 +1276,7 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 							LPCTSTR strMsg1 = L"Decompresia s-a finalizat !";
 							index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
 							index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
-						}
+						}*/
 
 				/*int index;
 				LPCTSTR strMsg = L"Sa inceapa decompresia !";
