@@ -1222,8 +1222,8 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 						else
 							if (len2 != 0 && len3 != 0)
 							{
-								LPCTSTR strMsg = L"Sa inceapa compresia !";
-								LPCTSTR strMsg1 = L"Compresia s-a finalizat !";
+								LPCTSTR strMsg = L"Sa inceapa decompresia !";
+								LPCTSTR strMsg1 = L"Decompresia s-a finalizat !";
 								index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg);
 								index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
 								char filename_in[1000];
