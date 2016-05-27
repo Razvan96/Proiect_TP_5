@@ -25,6 +25,8 @@ int len;
 int len1;
 int len2;
 int len3;
+TCHAR FULL[MAX_PATH + 11];
+
 
 #define Code_value_bits 16              /* Number of bits in a code value   */
 typedef long code_value;                /* Type of an arithmetic code value */
@@ -936,10 +938,28 @@ INT_PTR CALLBACK Comp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			MessageBox(NULL, L"Compresia s-a realizat in fisierul text < in_encode.txt > !", WindowCaption2, MB_ICONINFORMATION);*/
 		}break;
 
-		/*case IDC_EDIT11:
+		case IDC_EDIT11:
 		{
-			MessageBox(hDlg, L"Ai apsat pe el", L"NU stiu", MB_OK);
-		}*/
+			len = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT11));
+			if (len == 0)
+			{
+				int index;
+				LPCTSTR strMsg1 = L"A-ti sters fisierul de intrare !";
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+			}
+		}break;
+
+		case IDC_EDIT12:
+		{
+			len1 = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT12));
+			if (len1 == 0)
+			{
+				int index;
+				LPCTSTR strMsg1 = L"A-ti sters fisierul de iesire !";
+				index = SendDlgItemMessage(hDlg, IDC_LIST1, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+			}
+		}break;
+
 		}
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 		{
@@ -1292,6 +1312,32 @@ INT_PTR CALLBACK Decomp(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				/*LPCTSTR WindowCaption2 = L"Important !!!";
 				MessageBox(NULL, L"Decompresia s-a realizat in fisierul text < in_decode.txt > !", WindowCaption2, MB_ICONINFORMATION);*/
 			}break;
+
+			case IDC_EDIT1:
+			{
+				len2 = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT1));
+				if (len2 == 0)
+				{
+					int index;
+					LPCTSTR strMsg1 = L"A-ti sters fisierul de intrare !";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+				}
+			}break;
+
+			case IDC_EDIT2:
+			{
+				len3 = GetWindowTextLength(GetDlgItem(hDlg, IDC_EDIT2));
+				if (len3 == 0)
+				{
+					int index;
+					LPCTSTR strMsg1 = L"A-ti sters fisierul de iesire !";
+					index = SendDlgItemMessage(hDlg, IDC_LIST2, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)strMsg1);
+				}
+			}break;
+
+
+
+
 		}
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 		{
